@@ -53,7 +53,7 @@ class Http
             }
         }else if( $ssl ){
             curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER,false);   //true any ca
-            curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST,1);       //check only host
+            curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST,2);       //check only host
             if (isset($rq['ssl_version'])) {
                 curl_setopt($curlHandle, CURLOPT_SSLVERSION, $rq['ssl_version']);
             } else {
