@@ -2422,4 +2422,51 @@ class YouTu
         }
         return $ret;
     }
+
+	/**
+     * fusionface 人脸融合
+     * @param $url 待融合的图片url
+     * @param $model_id 融合模板图片
+     * @return 返回的结果，JSON字符串，字段参见API文档
+     */
+    public static function fusionface($url, $model_id, $seq='') {
+
+        $expired = time() + self::EXPIRED_SECONDS;
+        $postUrl = Conf::$END_POINT . 'cgi-bin/pitu_open_access_for_youtu.fcg';
+        $sign = Auth::appSign($expired, Conf::$USER_ID);
+
+        $post_data = array(
+            'app_id' =>  Conf::$APPID,
+            'rsp_img_type' => 'url',
+            'img_data' => base64_encode(file_get_contents($url)),
+            'opdata' => array(
+                array(
+                    'cmd' => 'doFaceMerge',
+                    'params' => array(
+                        'model_id' => $model_id,
+                    ),
+                ),
+            ),
+        );
+
+        $req = array(
+            'url' => $postUrl,
+            'method' => 'post',
+            'timeout' => 10,
+            'data' => json_encode($post_data),
+            'header' => array(
+                'Authorization:'.$sign,
+                'Content-Type:text/json',
+                'Expect: ',
+            ),
+        );
+
+        $rsp  = Http::send($req);
+        $ret  = json_decode($rsp, true);
+
+        if(!$ret){
+            return self::getStatusText();
+        }
+        return $ret;
+    }
 }
